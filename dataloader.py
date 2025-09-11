@@ -28,29 +28,30 @@ def create_dataloader_v1(txt, batch_size, max_length, stride, shuffle=True, drop
     dataset = GPTDatasetV1(txt, tokenizer, max_length, stride)
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last, num_workers=num_workers)
     return dataloader
-    
-with open("./01_main-chapter-code/the-verdict.txt", "r", encoding="utf-8") as f:
-    raw_text = f.read()
 
-vocab_size = 50257
-output_dim = 256
-context_length = 1024
+if __name__ == '__main__':
+    with open("./the-verdict.txt", "r", encoding="utf-8") as f:
+        raw_text = f.read()
 
-token_embedding_layer = torch.nn.Embedding(vocab_size, output_dim)
-pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
+    vocab_size = 50257
+    output_dim = 256
+    context_length = 1024
 
-batch_size = 8
-max_length = 4
-dataloader = create_dataloader_v1(raw_text, batch_size=batch_size, max_length=max_length, stride=max_length)
+    token_embedding_layer = torch.nn.Embedding(vocab_size, output_dim)
+    pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
 
-for batch in dataloader:
-    x, y = batch
+    batch_size = 8
+    max_length = 4
+    dataloader = create_dataloader_v1(raw_text, batch_size=batch_size, max_length=max_length, stride=max_length)
 
-    token_embeddings = token_embedding_layer(x)
-    pos_embeddings = pos_embedding_layer(torch.arange(max_length))
+    for batch in dataloader:
+        x, y = batch
 
-    input_embeddings = token_embeddings + pos_embeddings
+        token_embeddings = token_embedding_layer(x)
+        pos_embeddings = pos_embedding_layer(torch.arange(max_length))
 
-    print(input_embeddings.shape)
+        input_embeddings = token_embeddings + pos_embeddings
 
-    break
+        print(input_embeddings.shape)
+
+        break
